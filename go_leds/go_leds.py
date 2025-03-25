@@ -41,7 +41,7 @@ class CaseLedI2c(CaseLed):
     def __init__(self, lednum:int):
         self.lednum = lednum -1
         self.bus = smbus2.SMBus(2)
-        if not self.bus.read_byte_data(I2CADDR,0) is 0x40:
+        if self.bus.read_byte_data(I2CADDR,0) != 0x40:
             self.bus.write_byte_data(I2CADDR, 0x17, 0xff)
             self.bus.write_byte_data(I2CADDR, 0x0, 0x40)
         else:
@@ -135,18 +135,16 @@ def set_led():
     )
     parser.add_argument(
         "lednum",
-#        required=True,
         type=int,
         help="The number (1-4) of the led to controll",)
     parser.add_argument(
         "function",
-#        required=True,
         type=str,
         help="The function to control, <brightness/red/green/blue>",
+        choices=["brightness", "red", "green", "blue"],
     )
     parser.add_argument(
         "value",
-#        required=True,
         type=int,
         help="The value to right to led/function",
     )
@@ -230,3 +228,84 @@ def test_leds():
     led2.set_led_brightness(0)
     led3.set_led_brightness(0)
     led4.set_led_brightness(0)
+
+def flash_leds():
+    from argparse import ArgumentParser
+    import time
+
+    parser = ArgumentParser(
+        prog="go-flash-leds",
+        description=f"""go-flash-leds\n
+        Flash the case leds rate*num flashes should not exceed 10000""",
+        add_help=True,
+    )
+    parser.add_argument(
+        "-r",
+        "--rate",
+        required=False,
+        type=int,
+        default=200,
+        help="The flash interval in ms (default: %(default)s ms)",
+    )
+    parser.add_argument(
+        "flash_count",
+        type=int,
+        help="Number of times to flash the leds",
+        default=1,
+    )
+
+    args = parser.parse_args()
+    if args.rate * args.flash_count > 10000:
+        print("Too many flashes")
+        exit(-1)
+
+    led1 = get_led(1)
+    led2 = get_led(2)
+    led3 = get_led(3)
+    led4 = get_led(4)
+
+    led1.set_led_brightness(0)
+    led2.set_led_brightness(0)
+    led3.set_led_brightness(0)
+    led4.set_led_brightness(0)
+
+    led1.set_led_red(165)
+    led2.set_led_red(165)
+    led3.set_led_red(165)
+    led4.set_led_red(165)
+
+    led1.set_led_green(50)
+    led2.set_led_green(50)
+    led3.set_led_green(50)
+    led4.set_led_green(50)
+
+    led1.set_led_blue(0)
+    led2.set_led_blue(0)
+    led3.set_led_blue(0)
+    led4.set_led_blue(0)
+
+    for _ in range(0,args.flash_count):
+        time.sleep(args.rate/1000)
+
+        led1.set_led_brightness(127)
+        led2.set_led_brightness(127)
+        led3.set_led_brightness(127)
+        led4.set_led_brightness(127)
+
+        time.sleep(args.rate/1000)
+
+        led1.set_led_brightness(0)
+        led2.set_led_brightness(0)
+        led3.set_led_brightness(0)
+        led4.set_led_brightness(0)
+
+    led1.set_led_red(0)
+    led2.set_led_red(0)
+    led3.set_led_red(0)
+    led4.set_led_red(0)
+
+    led1.set_led_green(0)
+    led2.set_led_green(0)
+    led3.set_led_green(0)
+    led4.set_led_green(0)
+
