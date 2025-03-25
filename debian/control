@@ -1,0 +1,25 @@
+Source: go-leds
+Section: misc
+Priority: optional
+Maintainer: Maud Spierings <maudspierings@gocontroll.com>
+Rules-Requires-Root: no
+Build-Depends:
+ debhelper-compat (= 13),
+ dh-sequence-python3,
+ python3-setuptools,
+ python3-all,
+Standards-Version: 4.6.2
+Homepage: https://gocontroll.com
+Vcs-Browser: https://github.com/GOcontroll/go-leds
+Vcs-Git: https://github.com/GOcontroll/go-leds.git
+
+Package: python3-go-leds
+Architecture: all
+Depends:
+ ${python3:Depends},
+ ${misc:Depends},
+Description: A python library for controlling the case leds of a Moduline controller(Python 3)
+ Also includes a cli tool and the go-test-leds script
+ .
+ This package installs the library for Python 3.
+

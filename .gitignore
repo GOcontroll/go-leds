@@ -172,3 +172,11 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+.venv
+.pybuild
+debian/.debhelper/
+debian/go-leds*
+debian/python3-go-leds*
+debian/files
+debian/debhelper-build-stamp
